@@ -38,7 +38,7 @@ def read_audio():
     sd.wait()
     sf.write(filename, mydata, samplerate)
 
-def test_audio(filename):
+def test_audio(filename,classes):
     samples, sample_rate = librosa.load(filename, sr=16000)
     samples = librosa.resample(samples, sample_rate, 8000)
     ipd.Audio(samples, rate=8000)
@@ -51,40 +51,42 @@ if __name__ == "__main__":
     labels = ["yes", "no", "up", "down", "left", "right", "on", "off", "stop", "go"]
     print("POSSIBLE COMMANDS ARE: " , labels)
     print("loading model...")
-    all_wave = []
-    all_label = []
-    filepath = pathlib.Path(__file__).parent.absolute()
-    train_audio_path = str(filepath) + '/tensorflow-speech-recognition-challenge/train/audio/'
+    # all_wave = []
+    # all_label = []
+    # filepath = pathlib.Path(__file__).parent.absolute()
+    # train_audio_path = str(filepath) + '/tensorflow-speech-recognition-challenge/train/audio/'
+    #
+    # for label in labels:
+    #     waves = [f for f in os.listdir(train_audio_path + '/' + label) if f.endswith('.wav')]
+    #     for wav in waves:
+    #             all_label.append(label)
+    #
+    # from sklearn.preprocessing import LabelEncoder
+    #
+    # le = LabelEncoder()
+    # y = le.fit_transform(all_label)
+    # classes = list(le.classes_)
+    # print(classes)
 
-    for label in labels:
-        waves = [f for f in os.listdir(train_audio_path + '/' + label) if f.endswith('.wav')]
-        for wav in waves:
-                all_label.append(label)
-
-    from sklearn.preprocessing import LabelEncoder
-
-    le = LabelEncoder()
-    y = le.fit_transform(all_label)
-    classes = list(le.classes_)
-
+    classes2 = ['down', 'go', 'left', 'no', 'off', 'on', 'right', 'stop', 'up', 'yes']
     from keras.utils import np_utils
     from keras.models import load_model
     model = load_model('best_model.hdf5')
     filepath = pathlib.Path(__file__).parent.absolute()
     file_name = str(filepath) + '/test.wav'
-    a = 0
+    choice = 0
     end_program = False
 
     while True:
-        if end_program == True:
+        if end_program:
             break
         read_audio()
-        test_audio(file_name)
+        test_audio(file_name, classes2)
         while True:
-            a = input("do you want to continue? y/n ")
-            if a == 'y':
+            choice = input("do you want to continue? y/n ")
+            if choice == 'y':
                 break
-            elif a == 'n':
+            elif choice == 'n':
                 end_program = True
                 break
             else:
@@ -95,4 +97,3 @@ if __name__ == "__main__":
 
     print("TERMINATING..")
 
-    # reading the voice commands
